@@ -34,7 +34,7 @@ impl<const COLUMNS: usize> std::fmt::Display for Table<COLUMNS> {
             let diff = max.saturating_sub(v.len());
             v.fmt(f)?;
             if diff > 0 {
-                " ".repeat(diff as usize).fmt(f)?;
+                " ".repeat(diff).fmt(f)?;
             }
             " | ".fmt(f)?;
             total += max + 3;
@@ -44,11 +44,11 @@ impl<const COLUMNS: usize> std::fmt::Display for Table<COLUMNS> {
         writeln!(f, "{}", "-".repeat(total))?;
 
         for row in &self.data {
-            for (v, max) in row.into_iter().zip(maxs) {
+            for (v, max) in row.iter().zip(maxs) {
                 let diff = max.saturating_sub(v.len());
                 v.fmt(f)?;
                 if diff > 0 {
-                    " ".repeat(diff as usize).fmt(f)?;
+                    " ".repeat(diff).fmt(f)?;
                 }
                 " | ".fmt(f)?;
             }

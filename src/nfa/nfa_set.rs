@@ -12,7 +12,7 @@ pub struct NFASet(pub NFA);
 impl NFASet {
     pub fn build(mut nfas: Vec<(Label, NFA)>) -> Result<Self, String> {
         let mut nfa = if let Some((marker, mut nfa)) = nfas.pop() {
-            nfa.new_group_state(marker.into());
+            nfa.new_group_state(marker);
             nfa
         } else {
             return Err("At least one nfa must be provided".to_string());
@@ -21,7 +21,7 @@ impl NFASet {
         for (marker, mut next_nfa) in nfas {
             // Offset each state since we append this nfa to the other.
             let add_state = nfa.transitions.len();
-            next_nfa.new_group_state(marker.into());
+            next_nfa.new_group_state(marker);
 
             for state in &mut next_nfa.transitions {
                 match state {

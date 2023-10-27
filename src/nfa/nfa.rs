@@ -57,15 +57,14 @@ pub struct NFA {
 impl NFA {
     #[must_use]
     pub fn new() -> Self {
-        let nfa = Self {
+        Self {
             transitions: vec![Transition::Eof],
             eof: State(0),
             // Is changed when regex is compiled
             accept: State(0),
             // Is changed when regex is compiled
             start: State(0),
-        };
-        nfa
+        }
     }
 }
 
@@ -338,7 +337,7 @@ impl Step {
         Self {
             current_char: 0 as char,
             consumed: 0,
-            step_list: (0..num_states).into_iter().map(|_| 0).collect(),
+            step_list: (0..num_states).map(|_| 0).collect(),
             step: 1,
         }
     }
@@ -382,13 +381,13 @@ impl NFA {
                     self.add_state(step, list, matches, group, e2);
                 }
             }
-            Transition::Group(l, e) => self.add_state(step, list, matches, Some(l.clone()), *e),
+            Transition::Group(l, e) => self.add_state(step, list, matches, Some(*l), *e),
             Transition::Label(_, _) | Transition::Accept => {
                 step.set_visited(state);
-                list.push((group.clone(), state));
+                list.push((group, state));
 
                 if state == self.accept {
-                    matches.insert(group.clone(), step.consumed);
+                    matches.insert(group, step.consumed);
                 }
             }
             Transition::Eof => {

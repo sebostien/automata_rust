@@ -13,7 +13,7 @@ pub struct DFA {
 }
 
 impl From<NFA> for DFA {
-    fn from(value: NFA) -> Self {
+    fn from(_: NFA) -> Self {
         todo!()
     }
 }
@@ -40,7 +40,7 @@ impl Language for DFA {
     }
 
     fn try_from_language<S: AsRef<str>>(source: S) -> Result<Self, LanguageError> {
-        NFA::try_from_language(source).map(DFA::from)
+        NFA::try_from_language(source).map(Self::from)
     }
 }
 

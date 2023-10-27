@@ -115,7 +115,7 @@ impl std::fmt::Display for DiGraph {
         match exec_dot(dot, vec![Format::Svg.into(), Layout::Dot.into()]) {
             Ok(s) => s.fmt(f),
             Err(e) => {
-                eprintln!("{}", e);
+                writeln!(f, "{}", e)?;
                 Err(std::fmt::Error)
             }
         }

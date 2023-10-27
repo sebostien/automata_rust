@@ -77,7 +77,6 @@ pub trait Language: Sized {
     fn to_language(&self) -> String;
 
     /// Parse a language string.
-    #[must_use]
     fn try_from_language<S: AsRef<str>>(source: S) -> Result<Self, LanguageError>;
 }
 
