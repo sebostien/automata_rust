@@ -2,7 +2,7 @@ use std::process::ExitCode;
 
 use clap::{Parser, Subcommand};
 
-use automata_rust::{self, graph_display::DiGraph};
+use automata_rust::{self, graph_display::DiGraph, language::Language};
 
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about = None)]
@@ -16,6 +16,8 @@ enum Commands {
     Svg {
         #[arg(long)]
         nfa: bool,
+        #[arg(long)]
+        dfa: bool,
         input: String,
     },
     Table {
@@ -41,21 +43,23 @@ fn run(args: Args) -> Result<(), Box<dyn std::error::Error>> {
     let mut table = None;
 
     match args.command {
-        Commands::Svg { nfa, input } => {
-            let postfix = input.parse()?;
+        Commands::Svg { nfa, dfa, input } => {
             if nfa {
-                let nfa = automata_rust::nfa::NFA::compile(postfix)?;
+                let nfa = automata_rust::nfa::NFA::try_from_language(input)?;
                 let graph: DiGraph = (&nfa).into();
+                svg = Some(graph.to_string());
+            } else if dfa {
+                let nfa = automata_rust::nfa::NFA::try_from_language(input)?;
+                let dfa = automata_rust::dfa::DFA::from(nfa);
+                let graph: DiGraph = (&dfa).into();
                 svg = Some(graph.to_string());
             }
         }
         Commands::Table { nfa, input } => {
-            let postfix = input.parse()?;
-
             if nfa {
-                table = Some(automata_rust::nfa::NFA::compile(postfix)?.to_string());
+                table = Some(automata_rust::nfa::NFA::try_from_language(input)?.to_string());
             } else {
-                return Err("Exactly one graph representation must be choosen!".into());
+                return Err("Exactly one graph representation must be chosen!".into());
             }
         }
     }

@@ -29,11 +29,11 @@ impl Postfix {
             Token::Lit(lit) => vec![Token::Lit(lit)],
             Token::Eof => vec![Token::Eof],
             Token::OParen => {
-                let lhs = Self::parse_expr(input, 0);
+                let lhs = Self::parse_expr(input, 0)?;
                 if input.next() != Some(Token::CParen) {
                     return Err(ParseError::Unmatched("("));
                 }
-                lhs?
+                lhs
             }
             token => return Err(ParseError::InvalidPrefix(token)),
         };

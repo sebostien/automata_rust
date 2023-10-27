@@ -77,8 +77,8 @@ impl Language for NFASet {
         self.0.to_language()
     }
 
-    fn from_language<S: AsRef<str>>(source: S) -> Result<Self, LanguageError> {
-        Ok(Self(NFA::from_language(source)?))
+    fn try_from_language<S: AsRef<str>>(source: S) -> Result<Self, LanguageError> {
+        Ok(Self(NFA::try_from_language(source)?))
     }
 }
 
@@ -101,11 +101,11 @@ mod tests {
 
     fn nfa_set() {
         let nfa = NFASet::build(vec![
-            ("(a-z)+", NFA::from_language("(a-z)+").unwrap()),
-            ("(A-Z)+", NFA::from_language("(A-Z)+").unwrap()),
-            ("(0-9)+", NFA::from_language("(0-9)+").unwrap()),
-            ("do", NFA::from_language("do").unwrap()),
-            ("w|if|b", NFA::from_language("while|if|break").unwrap()),
+            ("(a-z)+", NFA::try_from_language("(a-z)+").unwrap()),
+            ("(A-Z)+", NFA::try_from_language("(A-Z)+").unwrap()),
+            ("(0-9)+", NFA::try_from_language("(0-9)+").unwrap()),
+            ("do", NFA::try_from_language("do").unwrap()),
+            ("w|if|b", NFA::try_from_language("while|if|break").unwrap()),
         ])
         .unwrap();
 

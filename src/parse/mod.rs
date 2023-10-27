@@ -135,7 +135,8 @@ impl Iterator for Lexer<'_> {
         if let Some(p) = self.queue.pop_front() {
             Some(p)
         } else if self.peek().is_some() {
-            // Peek inserts token into queue so next time we won't get here
+            // Peek inserts the next token into the queue
+            // so at the next iteration we will return `Some(p)` above
             self.next()
         } else {
             None

@@ -444,13 +444,7 @@ impl Language for NFA {
         let mut step = Step::new(self.transitions.len());
 
         // Follow any eps-closuers at the start
-        self.add_state(
-            &mut step,
-            &mut current_list,
-            &mut matches,
-            None,
-            self.start,
-        );
+        self.add_state(&mut step, &mut current_list, &mut matches, None, self.start);
 
         for c in input.chars() {
             step.next_step(c);
@@ -477,7 +471,7 @@ impl Language for NFA {
         todo!()
     }
 
-    fn from_language<S: AsRef<str>>(source: S) -> Result<Self, LanguageError> {
+    fn try_from_language<S: AsRef<str>>(source: S) -> Result<Self, LanguageError> {
         let postfix = source.as_ref().parse().map_err(LanguageError::ParseError)?;
         Self::compile(postfix).map_err(LanguageError::CompileError)
     }
@@ -537,7 +531,7 @@ mod tests {
     use super::*;
 
     fn test_gen<const MAX_LEN: usize>(pattern: &str, possible: usize) {
-        let nfa = NFA::from_language(pattern).unwrap();
+        let nfa = NFA::try_from_language(pattern).unwrap();
         let gen = nfa.generate::<MAX_LEN>();
         if gen.len() != possible {
             std::fs::write("./gen.txt", gen.join("\n")).expect("Failed to write");
@@ -561,7 +555,7 @@ mod tests {
 
     #[test]
     fn matches() {
-        let nfa: NFA = NFA::from_language("A?A?A*B").unwrap();
+        let nfa: NFA = NFA::try_from_language("A?A?A*B").unwrap();
         assert_eq!(nfa.is_match("BB"), (vec![Match::NoGroup(1)]));
         assert_eq!(nfa.is_match("AB"), (vec![Match::NoGroup(2)]));
         assert_eq!(nfa.is_match("AAB"), (vec![Match::NoGroup(3)]));
@@ -571,7 +565,7 @@ mod tests {
         assert!(nfa.is_match("AAA").is_empty());
         assert!(nfa.is_match("CAAAAB").is_empty());
 
-        let nfa: NFA = NFA::from_language("(A|B)+").unwrap();
+        let nfa: NFA = NFA::try_from_language("(A|B)+").unwrap();
         assert!(nfa.is_match("").is_empty());
         assert_eq!(nfa.is_match("AAAA"), vec![Match::NoGroup(4)]);
         assert_eq!(nfa.is_match(&"A".repeat(20)), vec![Match::NoGroup(20)]);
@@ -582,14 +576,14 @@ mod tests {
         );
         assert!(nfa.is_match(&"a".repeat(20)).is_empty());
 
-        let nfa: NFA = NFA::from_language("(A|B)?C?").unwrap();
+        let nfa: NFA = NFA::try_from_language("(A|B)?C?").unwrap();
         assert_eq!(nfa.is_match(""), (vec![Match::NoGroup(0)]));
         assert_eq!(nfa.is_match("A"), (vec![Match::NoGroup(1)]));
         assert_eq!(nfa.is_match("B"), (vec![Match::NoGroup(1)]));
         assert_eq!(nfa.is_match("C"), (vec![Match::NoGroup(1)]));
         assert_eq!(nfa.is_match("AC"), (vec![Match::NoGroup(2)]));
 
-        let nfa: NFA = NFA::from_language("\n|\t+").unwrap();
+        let nfa: NFA = NFA::try_from_language(r"\n|\t+").unwrap();
         assert!(nfa.is_match("").is_empty());
         assert_eq!(nfa.is_match("\t\t"), (vec![Match::NoGroup(2)]));
         assert_eq!(nfa.is_match("\n"), (vec![Match::NoGroup(1)]));
@@ -601,19 +595,19 @@ mod tests {
 
     #[test]
     fn eof() {
-        let nfa: NFA = NFA::from_language("a$").unwrap();
+        let nfa: NFA = NFA::try_from_language("a$").unwrap();
         assert_eq!(nfa.is_match("a"), (vec![Match::NoGroup(1)]));
         assert_eq!(nfa.is_match(""), vec![]);
         assert_eq!(nfa.is_match("aa"), vec![]);
 
-        let nfa: NFA = NFA::from_language("a$|b+$").unwrap();
+        let nfa: NFA = NFA::try_from_language("a$|b+$").unwrap();
         assert_eq!(nfa.is_match("a"), (vec![Match::NoGroup(1)]));
         assert_eq!(nfa.is_match("b"), vec![Match::NoGroup(1)]);
         assert_eq!(nfa.is_match("bbb"), vec![Match::NoGroup(3)]);
         assert_eq!(nfa.is_match("ab"), vec![]);
         assert_eq!(nfa.is_match("bba"), vec![]);
 
-        let nfa: NFA = NFA::from_language("$").unwrap();
+        let nfa: NFA = NFA::try_from_language("$").unwrap();
         assert_eq!(nfa.is_match(""), vec![Match::NoGroup(0)]);
     }
 
@@ -635,7 +629,7 @@ mod tests {
         let pattern = "A?".repeat(N) + &"A".repeat(N);
         let input = &"A".repeat(N);
 
-        let nfa: NFA = NFA::from_language(pattern).unwrap();
+        let nfa: NFA = NFA::try_from_language(pattern).unwrap();
 
         assert!(!nfa.is_match(input).is_empty());
 

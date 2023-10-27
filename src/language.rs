@@ -78,13 +78,13 @@ pub trait Language: Sized {
 
     /// Parse a language string.
     #[must_use]
-    fn from_language<S: AsRef<str>>(source: S) -> Result<Self, LanguageError>;
+    fn try_from_language<S: AsRef<str>>(source: S) -> Result<Self, LanguageError>;
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Label(&'static str);
 
-impl From<Label> for &'static str{
+impl From<Label> for &'static str {
     fn from(value: Label) -> Self {
         value.0
     }
