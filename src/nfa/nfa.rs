@@ -55,13 +55,15 @@ pub struct NFA {
 }
 
 impl NFA {
+    #[must_use]
     pub fn new() -> Self {
         let nfa = Self {
-            transitions: vec![Transition::Eof, Transition::Accept],
+            transitions: vec![Transition::Eof],
             eof: State(0),
-            accept: State(1),
             // Is changed when regex is compiled
-            start: State(2),
+            accept: State(0),
+            // Is changed when regex is compiled
+            start: State(0),
         };
         nfa
     }
@@ -367,7 +369,6 @@ impl NFA {
         group: Option<Label>,
         state: State,
     ) {
-        // Check if the state has been added already
         if step.is_visited(state) {
             return;
         };

@@ -1,4 +1,3 @@
-#![feature(lazy_cell)]
 #![feature(test)]
 #![warn(
     missing_copy_implementations,

@@ -66,6 +66,7 @@ fn run(args: Args) -> Result<(), Box<dyn std::error::Error>> {
 
     if let Some(svg) = svg {
         std::fs::write("./graph.svg", svg).expect("Could not write data to file!");
+        println!("Saved image as './graph.svg'");
     }
 
     if let Some(table) = table {
