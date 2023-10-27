@@ -19,9 +19,7 @@ impl From<&NFA> for DiGraph {
 
         for (state, transition) in nfa.transitions.iter().enumerate() {
             let state = State(state);
-            if state == nfa.accept {
-                nodes.push(node!(state; NodeAttributes::shape(shape::doublecircle)));
-            } else if state == nfa.eof {
+            if state == nfa.accept || state == nfa.eof {
                 nodes.push(node!(state; NodeAttributes::shape(shape::doublecircle)));
             } else if state == nfa.start {
                 nodes.push(node!(state));
@@ -36,7 +34,7 @@ impl From<&NFA> for DiGraph {
                 Transition::Label(l, e) => {
                     edges.push(edge!(node_id!(state) => node_id!(e);
                             EdgeAttributes::arrowhead(arrowhead::normal),
-                            EdgeAttributes::label(format!("\"{l}\""))
+                            EdgeAttributes::label(format!("\"'\\{l}'\""))
                     ));
                 }
                 &Transition::Split(e1, e2) => {
