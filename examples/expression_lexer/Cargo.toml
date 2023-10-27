@@ -1,0 +1,8 @@
+[package]
+name = "expression_lexer"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+automata_rust = { path = "../../" }
+lazy_static = "1.4.0"

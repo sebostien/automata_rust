@@ -10,10 +10,7 @@ use super::{nfa::Transition, state::State, NFA};
 pub struct NFASet(pub NFA);
 
 impl NFASet {
-    pub fn build<L>(mut nfas: Vec<(L, NFA)>) -> Result<Self, String>
-    where
-        L: Into<Label>,
-    {
+    pub fn build(mut nfas: Vec<(Label, NFA)>) -> Result<Self, String> {
         let mut nfa = if let Some((marker, mut nfa)) = nfas.pop() {
             nfa.new_group_state(marker.into());
             nfa
@@ -101,11 +98,14 @@ mod tests {
 
     fn nfa_set() {
         let nfa = NFASet::build(vec![
-            ("(a-z)+", NFA::try_from_language("(a-z)+").unwrap()),
-            ("(A-Z)+", NFA::try_from_language("(A-Z)+").unwrap()),
-            ("(0-9)+", NFA::try_from_language("(0-9)+").unwrap()),
-            ("do", NFA::try_from_language("do").unwrap()),
-            ("w|if|b", NFA::try_from_language("while|if|break").unwrap()),
+            ("(a-z)+".into(), NFA::try_from_language("(a-z)+").unwrap()),
+            ("(A-Z)+".into(), NFA::try_from_language("(A-Z)+").unwrap()),
+            ("(0-9)+".into(), NFA::try_from_language("(0-9)+").unwrap()),
+            ("do".into(), NFA::try_from_language("do").unwrap()),
+            (
+                "w|if|b".into(),
+                NFA::try_from_language("while|if|break").unwrap(),
+            ),
         ])
         .unwrap();
 
